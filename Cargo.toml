@@ -4,9 +4,9 @@ version = "0.0.1"
 description = "Rust bindings to Porcupine"
 authors = ["Lilis Iskandar <lilis@veand.co>"]
 license = "MIT"
-repository = "https://github.com/veandco/porcupine-rs.git"
-homepage = "https://github.com/veandco/porcupine-rs"
-documentation = "https://docs.rs/porcupine-rs/"
+repository = "https://github.com/veandco/porcupine-sys.git"
+homepage = "https://github.com/veandco/porcupine-sys"
+documentation = "https://docs.rs/porcupine-sys/"
 build = "build.rs"
 
 [dependencies]
