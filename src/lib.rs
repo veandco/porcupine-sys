@@ -42,6 +42,8 @@ pub struct Object {
     _object: *mut c::pv_porcupine_object_t,
 }
 
+unsafe impl Send for Object {}
+
 impl Object {
     /// Creates a new Porcupine object.
     pub unsafe fn new(
