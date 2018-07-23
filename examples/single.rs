@@ -7,6 +7,13 @@ use std::io::Read;
 
 use porcupine_sys as pv;
 
+#[cfg(target_os = "linux")]
+const KEYWORD_FILE: &str = "assets/hi robot_linux.ppn";
+#[cfg(target_os = "macos")]
+const KEYWORD_FILE: &str = "assets/hi robot_mac.ppn";
+#[cfg(target_os = "windows")]
+const KEYWORD_FILE: &str = "assets/hi robot_windows.ppn";
+
 fn read_audio_file() -> Vec<u8> {
     let mut file = File::open("assets/single.raw").unwrap();
     let mut audio_u8 = Vec::new();
@@ -36,13 +43,8 @@ fn main() {
     let audio_u8 = read_audio_file();
     let audio_i16 = vec_u8_to_vec_i16(&audio_u8);
     let frame_length = unsafe { pv::frame_length() };
-    let mut object = unsafe {
-        pv::Object::new(
-            "assets/porcupine_params.pv",
-            "assets/hi robot_linux.ppn",
-            0.5,
-        ).unwrap()
-    };
+    let mut object =
+        unsafe { pv::Object::new("assets/porcupine_params.pv", KEYWORD_FILE, 0.5).unwrap() };
     let mut index = 0;
 
     // Detect keyword

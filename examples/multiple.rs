@@ -7,6 +7,25 @@ use std::io::Read;
 
 use porcupine_sys as pv;
 
+#[cfg(target_os = "linux")]
+const KEYWORD_FILES: [&str; 3] = [
+    "assets/play music_linux.ppn",
+    "assets/next music_linux.ppn",
+    "assets/stop music_linux.ppn",
+];
+#[cfg(target_os = "macos")]
+const KEYWORD_FILES: [&str; 3] = [
+    "assets/play music_mac.ppn",
+    "assets/next music_mac.ppn",
+    "assets/stop music_mac.ppn",
+];
+#[cfg(target_os = "windows")]
+const KEYWORD_FILES: [&str; 3] = [
+    "assets/play music_windows.ppn",
+    "assets/next music_windows.ppn",
+    "assets/stop music_windows.ppn",
+];
+
 fn read_audio_file() -> Vec<u8> {
     let mut file = File::open("assets/multiple.raw").unwrap();
     let mut audio_u8 = Vec::new();
@@ -39,11 +58,7 @@ fn main() {
     let mut object = unsafe {
         pv::Object::new_multiple_keywords(
             "assets/porcupine_params.pv",
-            &[
-                "assets/play music_linux.ppn",
-                "assets/next music_linux.ppn",
-                "assets/stop music_linux.ppn",
-            ],
+            &KEYWORD_FILES,
             &[0.5, 0.5, 0.5],
         ).unwrap()
     };
