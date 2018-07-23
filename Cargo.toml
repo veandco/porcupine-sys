@@ -1,6 +1,6 @@
 [package]
 name = "porcupine-sys"
-version = "0.0.2"
+version = "0.0.3"
 description = "Rust bindings to Porcupine"
 authors = ["Lilis Iskandar <lilis@veand.co>"]
 license = "MIT"
