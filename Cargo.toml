@@ -8,6 +8,7 @@ repository = "https://github.com/veandco/porcupine-sys.git"
 homepage = "https://github.com/veandco/porcupine-sys"
 documentation = "https://docs.rs/porcupine-sys/"
 build = "build.rs"
+exclude = ["assets"]
 
 [dependencies]
 libc = "0.2"
