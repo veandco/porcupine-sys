@@ -4,7 +4,7 @@
 
 // libc
 extern crate libc;
-use libc::c_int;
+use libc::{c_char, c_int};
 
 mod c;
 
@@ -86,7 +86,7 @@ impl Object {
         let status = c::pv_porcupine_multiple_keywords_init(
             _model_file_path,
             _number_keywords,
-            _keyword_file_paths.as_ptr() as *const *const i8,
+            _keyword_file_paths.as_ptr() as *const *const c_char,
             sensitivities.as_ptr(),
             &mut _object,
         );
