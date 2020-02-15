@@ -3,8 +3,7 @@
 //! A Rust binding for Porcupine
 
 // libc
-extern crate libc;
-use libc::{c_char, c_int};
+use std::os::raw::{c_char, c_int};
 
 mod c;
 
