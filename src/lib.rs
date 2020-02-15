@@ -39,7 +39,7 @@ pub unsafe fn frame_length() -> usize {
 }
 
 pub struct Object {
-    _object: *mut c::pv_porcupine_object_t,
+    _object: *mut c::pv_porcupine_t,
 }
 
 unsafe impl Send for Object {}
@@ -51,21 +51,7 @@ impl Object {
         keyword_file_path: &str,
         sensitivity: f32,
     ) -> Result<Self, Status> {
-        let mut _object: *mut c::pv_porcupine_object_t = ptr::null_mut();
-        let _model_file_path = CString::new(model_file_path).unwrap().into_raw();
-        let _keyword_file_path = CString::new(keyword_file_path).unwrap().into_raw();
-
-        let status = c::pv_porcupine_init(
-            _model_file_path,
-            _keyword_file_path,
-            sensitivity,
-            &mut _object,
-        );
-        if status != 0 {
-            return Err(status.into());
-        }
-
-        Ok(Object { _object })
+        Self::new_multiple_keywords(model_file_path, &[keyword_file_path], &[sensitivity])
     }
 
     /// Creates a new Porcupine object that is capable of detecting multiple keywords.
@@ -74,7 +60,7 @@ impl Object {
         keyword_file_paths: &[&str],
         sensitivities: &[f32],
     ) -> Result<Self, Status> {
-        let mut _object: *mut c::pv_porcupine_object_t = ptr::null_mut();
+        let mut _object: *mut c::pv_porcupine_t = ptr::null_mut();
         let _model_file_path = CString::new(model_file_path).unwrap().into_raw();
         let _number_keywords = keyword_file_paths.len() as c_int;
         let _keyword_file_paths: Vec<CString> = keyword_file_paths
@@ -83,7 +69,7 @@ impl Object {
             .collect();
         let _keyword_file_paths: Vec<_> = _keyword_file_paths.iter().map(|p| p.as_ptr()).collect();
 
-        let status = c::pv_porcupine_multiple_keywords_init(
+        let status = c::pv_porcupine_init(
             _model_file_path,
             _number_keywords,
             _keyword_file_paths.as_ptr() as *const *const c_char,
@@ -104,21 +90,14 @@ impl Object {
 
     /// Detect keyword within the provided audio data. The data must be 16-bit linearly-encoded and single-channel with sample rate equal to `sample_rate()`.
     pub unsafe fn process(&self, pcm: &[i16]) -> Result<bool, Status> {
-        let mut detected = false;
-
-        let status = c::pv_porcupine_process(self._object, pcm.as_ptr(), &mut detected);
-        if status != 0 {
-            return Err(status.into());
-        }
-
-        Ok(detected)
+        self.process_multiple_keywords(pcm).map(|x| x != -1)
     }
 
     /// Detect one of the keywords within the provided audio data. The data must be 16-bit linearly-encoded and single-channel with sample rate equal to `sample_rate()`. It returns the index of the detected keyword if successful.
     pub unsafe fn process_multiple_keywords(&self, pcm: &[i16]) -> Result<isize, Status> {
         let mut keyword_index: c_int = -1;
 
-        let status = c::pv_porcupine_multiple_keywords_process(
+        let status = c::pv_porcupine_process(
             self._object,
             pcm.as_ptr(),
             &mut keyword_index,
