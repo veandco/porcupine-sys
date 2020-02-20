@@ -28,12 +28,22 @@ fn vec_u8_to_vec_i16(input: &[u8]) -> Vec<i16> {
     let mut output = Vec::new();
     let mut i = 0;
 
+    // Padding at the start
+    for _ in 0..2000 {
+        output.push(0);
+    }
+
     while i < input.len() {
         let h = (input[i + 1] as u16) << 8;
         let l = input[i] as u16;
         let val = (h | l) as i16;
         output.push(val);
         i += 2;
+    }
+
+    // Padding at the end
+    for _ in 0..2000 {
+        output.push(0);
     }
 
     output
